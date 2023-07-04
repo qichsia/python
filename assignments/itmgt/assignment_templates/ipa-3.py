@@ -223,5 +223,3 @@ def eta(first_stop, second_stop, route_map):
             travel_time.append((route['travel_time_mins']))
             
     return(sum(travel_time))
-
-print("hey")
