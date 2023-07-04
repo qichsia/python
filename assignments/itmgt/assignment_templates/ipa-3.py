@@ -1,41 +1,3 @@
-social_graph = {
-    "@bongolpoc":{"first_name":"Joselito",
-                  "last_name":"Olpoc",
-                  "following":[
-                  ]
-    },
-    "@joaquin":  {"first_name":"Joaquin",
-                  "last_name":"Gonzales",
-                  "following":[
-                      "@chums","@jobenilagan"
-                  ]
-    },
-    "@chums" : {"first_name":"Matthew",
-                "last_name":"Uy",
-                "following":[
-                    "@bongolpoc","@miketan","@rudyang","@joeilagan"
-                ]
-    },
-    "@jobenilagan":{"first_name":"Joben",
-                   "last_name":"Ilagan",
-                   "following":[
-                    "@eeebeee","@joeilagan","@chums","@joaquin"
-                   ]
-    },
-    "@joeilagan":{"first_name":"Joe",
-                  "last_name":"Ilagan",
-                  "following":[
-                    "@eeebeee","@jobenilagan","@chums"
-                  ]
-    },
-    "@eeebeee":  {"first_name":"Elizabeth",
-                  "last_name":"Ilagan",
-                  "following":[
-                    "@jobenilagan","@joeilagan"
-                  ]
-    },
-}
-
 '''Individual Programming Assignment 3
 
 70 points
@@ -79,7 +41,37 @@ def relationship_status(from_member, to_member, social_graph):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
+    follows = False
+    followed_by = False
 
+    # print(social_graph[from_member]['following'])
+
+    for member in (social_graph[from_member]['following']) :
+        if member == to_member :
+            follows = True
+            break
+        else :
+            follows = False
+    
+    for member in (social_graph[to_member]['following']) :
+        if member == from_member :
+            followed_by = True
+            break
+        else :
+            followed_by = False
+        
+    
+    if follows and followed_by :
+        return "friends"
+    
+    elif follows :
+         return "follower"
+
+    elif followed_by :
+         return "followed by"
+
+    else :
+        return "no relationship"
 
 
 def tic_tac_toe(board):
@@ -108,10 +100,73 @@ def tic_tac_toe(board):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    pass
+    size = (len(board))
+    characters = []
+    winner = None
+
+    for i in board:
+        for j in i:
+            characters.append(j)
+    unique_characters = list(set(characters))
+    #return(unique_characters)
+
+    # check row
+    for i in board :
+        if len(set(i)) == 1 :
+            winner = i[0]
+            break
+
+    # check column
+    column_count = 0
+    columns = []
+    while column_count <= size - 1 :
+        for i in board:
+            columns.append(i[column_count])
+        column_count += 1
+    #return(columns)
+
+    # dividing column into columns
+    column_list = []
+    for i in range(0,len(columns),size):
+        column_list.append(columns[i:i+size])
+    
+    for i in column_list :
+            if len(set(i)) == 1 :
+                winner = i[0]
+                break
+
+
+    # check diagonal
+    diagonals = []
+    left_diagonal = []
+    right_diagonal = []
+    
+    ld_count = 0
+    for i in board:
+        left_diagonal.append(i[ld_count])
+        ld_count += 1
+    diagonals.append(left_diagonal)
+
+    rd_count = size - 1
+    for i in board:
+        right_diagonal.append(i[rd_count])
+        rd_count -= 1
+    diagonals.append(right_diagonal)
+
+    for i in diagonals :
+            if len(set(i)) == 1 :
+                winner = i[0]
+                break
+
+    if winner == '' :
+        return "NO WINNER"
+    else :
+        return winner
 
 
 def eta(first_stop, second_stop, route_map):
+
+
     '''ETA.
     25 points.
 
@@ -142,4 +197,29 @@ def eta(first_stop, second_stop, route_map):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    pass
+    import itertools
+    try:
+        return(route_map[first_stop, second_stop]["travel_time_mins"])
+    except:
+        
+        routes = {}
+        travel_time = []
+
+        #return(dict)
+
+        for route in route_map :
+            if route[0] == first_stop :
+                first_index = list(route_map).index(route)
+                #return first_index
+
+        for route in route_map :
+            if route[1] == second_stop :
+                second_index = list(route_map).index(route)
+                #return second_index
+        
+        routes = dict(itertools.islice(route_map.items(), first_index ,second_index+1))
+
+        for route in routes.values() :
+            travel_time.append((route['travel_time_mins']))
+            
+    return(sum(travel_time))
