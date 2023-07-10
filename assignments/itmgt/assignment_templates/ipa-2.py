@@ -37,20 +37,18 @@ def shift_letter(letter, shift):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    letter = letter.upper()
-    if letter == " " :
-        print(" ")
-    elif shift == "_" :
-        print("\'"+letter+"\'")
-    else :
-        pos = ord(letter) + shift
-        if pos > 90 :
-            pos = pos - 90 + 64
-            shifted = chr(pos)
-        else :
-            shifted = chr(pos)
     
-        return(shifted)
+    if letter == " ":
+        return " "
+    else :
+        letter = letter.upper()
+
+    ascii_offset = ord("A")
+    num_letters = 26
+    letter_value = ord(letter) - ascii_offset
+    shifted_value = (letter_value + shift) % num_letters
+    shifted_letter = chr(shifted_value + ascii_offset)
+    return shifted_letter
 
 def caesar_cipher(message, shift):
     '''Caesar Cipher.
@@ -72,22 +70,11 @@ def caesar_cipher(message, shift):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    message = message.upper()
-    caesar = []
-    for letter in message :
-        if letter == " " :
-            caesar.append(" ")
-        else :
-            pos = ord(letter) + shift
-            
-            if pos > 90 :
-                pos = pos - 90 + 64
-                shifted = chr(pos)
-            else :
-                shifted = chr(pos)
-            
-            caesar.append(shifted)
-    print(''.join(caesar))
+    shifted_message = ""
+    for letter in message:
+        shifted_letter = shift_letter(letter, shift)
+        shifted_message += shifted_letter
+    return shifted_message
 
 def shift_by_letter(letter, letter_shift):
     '''Shift By Letter.
@@ -117,26 +104,18 @@ def shift_by_letter(letter, letter_shift):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    letter = letter.upper()
-    letter_shift = letter_shift.upper()
-    if letter == " " :
-        print(" ")
-    elif letter_shift == "_" :
-        print("\'"+letter+"\'")
-    else :
+    if letter == " ":
+        return " "
 
-        pos = ord(letter) + (ord(letter_shift) - 65)
-        
-        if pos > 90 :
-            pos = pos - 90 + 64
-            shifted = chr(pos)
-        else :
-            shifted = chr(pos)
-    
-        return(shifted)
+    ascii_offset = ord("A")
+    num_letters = 26
+    letter_value = ord(letter) - ascii_offset
+    shift_value = ord(letter_shift) - ascii_offset
+    shifted_value = (letter_value + shift_value) % num_letters
+    shifted_letter = chr(shifted_value + ascii_offset)
+    return shifted_letter
     
 
-shift_by_letter("C", "Y") 
 def vigenere_cipher(message, key):
     '''Vigenere Cipher.
     15 points.
@@ -168,29 +147,16 @@ def vigenere_cipher(message, key):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    message = message.upper()
-    key = key.upper()
-    from itertools import cycle
-    key = cycle(key)
-    vigenere = []
-
-    def cycle_key():
-        return next(key)
-    
-    for letter in message :
-        if letter == " " :
-            vigenere.append(" ")
-        else :
-            letter_shift = cycle_key()
-            pos = ord(letter) + (ord(letter_shift) - 65)
-        
-            if pos > 90 :
-                pos = pos - 90 + 64
-                shifted = chr(pos)
-            else :
-                shifted = chr(pos)
-            vigenere.append(shifted)
-    print(''.join(vigenere))
+    key = key * (len(message) // len(key)) + key[:len(message) % len(key)]
+    shifted_message = ""
+    for i in range(len(message)):
+        if message[i] == " ":
+            shifted_message += " "
+        else:
+            shift = ord(key[i]) - ord("A")
+            shifted_letter = shift_by_letter(message[i], chr(shift + ord("A")))
+            shifted_message += shifted_letter
+    return shifted_message
 
 
 def scytale_cipher(message, shift):
@@ -245,26 +211,13 @@ def scytale_cipher(message, shift):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    message = str(message.upper())
-    len_message = len(message)
-    shift = int(shift)
-    order = []
-    
-    if len_message % shift != 0 :
-        amt = shift - (len_message % shift)
-        hyphen = ("_"*amt)
-        message = message+hyphen
-        #return(message)
-    
-    for i in range(len(message)) :
-        
-        order_per_char = (i // shift) + (len(message)// shift)*(i%shift) # pos in row + num of rows * pos in column
-        order.append(order_per_char)
-        #print(order)
-    
-    for char in message :
-        encoded = [message[i] for i in order]
-        return ''.join(encoded)
+    if len(message) % shift != 0:
+        message += "_" * (shift - (len(message) % shift))
+    encoded_message = ""
+    for i in range(len(message)):
+        index = (i // shift) + (len(message) // shift) * (i % shift)
+        encoded_message += message[index]
+    return encoded_message
         
     
 
@@ -295,12 +248,10 @@ def scytale_decipher(message, shift):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    message = str(message.upper())
-    order = []
-    for i in range(len(message)) :
-        order_per_char = (i % (len(message) // shift)) * shift + (i // (len(message) // shift))
-        order.append(order_per_char)
-    
-    for char in message :
-        encoded = [message[i] for i in order]
-        return ''.join(encoded)
+    decoded_message = ""
+    num_rows = len(message) // shift
+    for row in range(num_rows):
+        for col in range(shift):
+            index = col * num_rows + row
+            decoded_message += message[index]
+    return decoded_message.rstrip("_")

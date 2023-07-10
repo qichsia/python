@@ -158,7 +158,7 @@ def tic_tac_toe(board):
                 winner = i[0]
                 break
 
-    if winner == '' :
+    if winner == None :
         return "NO WINNER"
     else :
         return winner
