@@ -158,7 +158,7 @@ def tic_tac_toe(board):
                 winner = i[0]
                 break
 
-    if winner == None :
+    if winner == None or winner == '' :
         return "NO WINNER"
     else :
         return winner
@@ -197,7 +197,6 @@ def eta(first_stop, second_stop, route_map):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    import itertools
     try:
         return(route_map[first_stop, second_stop]["travel_time_mins"])
     except:
@@ -217,9 +216,22 @@ def eta(first_stop, second_stop, route_map):
                 second_index = list(route_map).index(route)
                 #return second_index
         
-        routes = dict(itertools.islice(route_map.items(), first_index ,second_index+1))
 
-        for route in routes.values() :
-            travel_time.append((route['travel_time_mins']))
-            
-    return(sum(travel_time))
+
+        tempList = list(dict.keys(route_map))
+        #print(tempList)
+        
+        #endKey = tempList[second_index]
+
+        sumTime = 0
+        while (first_index % len(tempList) != second_index):
+            startKey = tempList[first_index % len(tempList)]
+            sumTime += route_map[startKey]["travel_time_mins"]
+            first_index += 1
+
+        if(first_index >= len(tempList)):
+            sumTime += route_map[tempList[first_index % len(tempList)]]["travel_time_mins"]
+        else:
+            sumTime += route_map[tempList[first_index]]["travel_time_mins"]
+        
+    return(sumTime)

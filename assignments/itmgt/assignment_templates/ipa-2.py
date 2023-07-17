@@ -248,10 +248,18 @@ def scytale_decipher(message, shift):
     '''
     # Replace `pass` with your code.
     # Stay within the function. Only use the parameters as input. The function should return your answer.
+    new_message = list(message)
     decoded_message = ""
-    num_rows = len(message) // shift
-    for row in range(num_rows):
-        for col in range(shift):
-            index = col * num_rows + row
-            decoded_message += message[index]
-    return decoded_message.rstrip("_")
+    len_message = len(message)
+    num_rows = len_message // shift
+
+    for row in range(shift):
+        for col in range(num_rows):
+            index = col * shift + row
+            
+            if index < len_message:
+                decoded_message += (message[index])
+    
+    Final_Message = "".join(decoded_message)
+
+    return(Final_Message)
